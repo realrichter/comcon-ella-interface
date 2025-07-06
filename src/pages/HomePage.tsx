@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import HeroSection from '../components/Hero/HeroSection';
 import ChatInterface from '../components/Chat/ChatInterface';
 import IndustrySelector, { Industry } from '../components/IndustrySelector/IndustrySelector';
 import IndustryContent from '../components/IndustryContent/IndustryContent';
@@ -15,6 +16,8 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
   const [selectedIndustry, setSelectedIndustry] = useState<Industry>('');
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [showBAFInfo, setShowBAFInfo] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [initialMessage, setInitialMessage] = useState('');
 
   const handleWatchVideo = () => {
     setShowVideoModal(true);
@@ -28,10 +31,43 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
     setSelectedIndustry(industry as Industry);
   };
 
+  const handleStartConversation = (message: string) => {
+    setInitialMessage(message);
+    setShowChat(true);
+  };
+
+  if (!showChat) {
+    return (
+      <div className="min-h-screen">
+        <HeroSection 
+          onStartConversation={handleStartConversation}
+          currentLanguage={currentLanguage}
+        />
+        
+        {/* Video Modal */}
+        <VideoModal
+          isOpen={showVideoModal}
+          onClose={() => setShowVideoModal(false)}
+          currentLanguage={currentLanguage}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="space-y-8">
+          {/* Back to Hero Button */}
+          <div className="flex justify-between items-center">
+            <button
+              onClick={() => setShowChat(false)}
+              className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            >
+              ← {currentLanguage === 'en' ? 'Back to Home' : 'Zurück zur Startseite'}
+            </button>
+          </div>
+
           {/* BAF Info Section (when expanded) */}
           <BAFInfoSection 
             isExpanded={showBAFInfo}
@@ -53,6 +89,7 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
               <ChatInterface 
                 currentLanguage={currentLanguage}
                 onIndustryDetected={handleIndustryDetected}
+                initialMessage={initialMessage}
               />
             </div>
             

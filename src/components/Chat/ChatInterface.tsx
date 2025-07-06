@@ -7,9 +7,14 @@ import { getBotResponse } from '../../utils/botResponses';
 interface ChatInterfaceProps {
   currentLanguage: 'en' | 'de';
   onIndustryDetected?: (industry: string) => void;
+  initialMessage?: string;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ currentLanguage, onIndustryDetected }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
+  currentLanguage, 
+  onIndustryDetected, 
+  initialMessage 
+}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -46,8 +51,35 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ currentLanguage, onIndust
         timestamp: new Date()
       };
       setMessages([welcomeMessage]);
+
+      // If there's an initial message from the hero, process it
+      if (initialMessage) {
+        setTimeout(() => {
+          const userMessage: Message = {
+            id: Date.now().toString(),
+            text: initialMessage,
+            sender: 'user',
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, userMessage]);
+          
+          // Process the initial message
+          setIsTyping(true);
+          setTimeout(() => {
+            const botResponse = getBotResponse(initialMessage);
+            const botMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              text: botResponse,
+              sender: 'bot',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, botMessage]);
+            setIsTyping(false);
+          }, 1000);
+        }, 500);
+      }
     }
-  }, [currentLanguage]);
+  }, [currentLanguage, initialMessage]);
 
   useEffect(() => {
     scrollToBottom();
