@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Zap, Shield, Cpu, Globe } from 'lucide-react';
+import { Zap, Shield, Cpu, Globe, X } from 'lucide-react';
 
 interface BAFInfoSectionProps {
   isExpanded: boolean;
