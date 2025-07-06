@@ -12,9 +12,9 @@ const BAFInfoSection: React.FC<BAFInfoSectionProps> = ({ isExpanded, onClose, cu
 
   const texts = {
     en: {
-      title: 'Business Automation Framework (BAF)',
+      title: 'Best Application Framework (BAF)',
       subtitle: 'The Complete Integration Platform for Modern Businesses',
-      description: 'Our Business Automation Framework (BAF) is a comprehensive integration platform that connects disparate business systems, eliminates manual processes, and creates intelligent workflows that adapt to your business needs.',
+      description: 'Our Best Application Framework (BAF) is a comprehensive integration platform that connects disparate business systems, eliminates manual processes, and creates intelligent workflows that adapt to your business needs.',
       coreFeatures: 'Core Features',
       features: [
         {
@@ -59,9 +59,9 @@ const BAFInfoSection: React.FC<BAFInfoSectionProps> = ({ isExpanded, onClose, cu
       close: 'Close'
     },
     de: {
-      title: 'Business Automation Framework (BAF)',
+      title: 'Best Application Framework (BAF)',
       subtitle: 'Die komplette Integrationsplattform für moderne Unternehmen',
-      description: 'Unser Business Automation Framework (BAF) ist eine umfassende Integrationsplattform, die verschiedene Geschäftssysteme verbindet, manuelle Prozesse eliminiert und intelligente Workflows erstellt, die sich an Ihre Geschäftsanforderungen anpassen.',
+      description: 'Unser Best Application Framework (BAF) ist eine umfassende Integrationsplattform, die verschiedene Geschäftssysteme verbindet, manuelle Prozesse eliminiert und intelligente Workflows erstellt, die sich an Ihre Geschäftsanforderungen anpassen.',
       coreFeatures: 'Kernfunktionen',
       features: [
         {

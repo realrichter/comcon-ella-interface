@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Globe } from 'lucide-react';
@@ -6,9 +5,10 @@ import { Globe } from 'lucide-react';
 interface HeaderProps {
   currentLanguage: 'en' | 'de';
   onLanguageToggle: () => void;
+  variant?: 'transparent' | 'solid';
 }
 
-const Header: React.FC<HeaderProps> = ({ currentLanguage, onLanguageToggle }) => {
+const Header: React.FC<HeaderProps> = ({ currentLanguage, onLanguageToggle, variant = 'solid' }) => {
   const texts = {
     en: {
       company: 'com:con solutions',
@@ -24,33 +24,50 @@ const Header: React.FC<HeaderProps> = ({ currentLanguage, onLanguageToggle }) =>
 
   const t = texts[currentLanguage];
 
+  // Dynamic styles based on variant
+  const headerClass =
+    variant === 'transparent'
+      ? 'sticky top-0 z-50 bg-transparent backdrop-blur-none'
+      : 'sticky top-0 z-50 bg-neutral-900/90 backdrop-blur-sm';
+  const linkClass =
+    'font-medium transition-colors drop-shadow ' +
+    (variant === 'transparent'
+      ? 'text-white hover:text-blue-200'
+      : 'text-white hover:text-blue-300');
+  const companyClass =
+    'text-2xl font-bold drop-shadow-md ' +
+    (variant === 'transparent' ? 'text-white' : 'text-white');
+  const buttonClass =
+    'flex items-center space-x-1 px-3 py-1 rounded-md border border-white/30 transition-colors drop-shadow ' +
+    (variant === 'transparent'
+      ? 'text-white hover:bg-white/10'
+      : 'text-white hover:bg-white/10');
+
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+    <header className={headerClass}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex-shrink-0">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className={companyClass}>
               {t.company}
             </h1>
           </Link>
-          
           <div className="flex items-center space-x-6">
             <Link 
               to="/integrations" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              className={linkClass}
             >
               {t.integrations}
             </Link>
             <Link 
               to="/contact" 
-              className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+              className={linkClass}
             >
               {t.contact}
             </Link>
-            
             <button
               onClick={onLanguageToggle}
-              className="flex items-center space-x-1 px-3 py-1 rounded-md border border-gray-200 hover:bg-gray-50 transition-colors"
+              className={buttonClass}
             >
               <Globe className="w-4 h-4" />
               <span className="text-sm font-medium">{currentLanguage.toUpperCase()}</span>

@@ -1,8 +1,7 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import ChatMessage, { Message } from './ChatMessage';
-import { getBotResponse } from '../../utils/botResponses';
+import { runEllaAgent } from '../../lib/ellaAgent';
 
 interface ChatInterfaceProps {
   currentLanguage: 'en' | 'de';
@@ -19,6 +18,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const texts = {
     en: {
@@ -45,8 +45,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const welcomeMessage: Message = {
         id: '1',
         text: currentLanguage === 'en' 
-          ? "Hello! I'm Ella, your personal integration assistant. I'm here to help you discover how com:con's Business Automation Framework (BAF) can streamline your business operations. What would you like to know?"
-          : "Hallo! Ich bin Ella, Ihr persönlicher Integrations-Assistent. Ich helfe Ihnen dabei zu entdecken, wie com:cons Business Automation Framework (BAF) Ihre Geschäftsprozesse optimieren kann. Was möchten Sie wissen?",
+          ? "Hello! I'm Ella, your personal integration assistant. I'm here to help you discover how com:con's Best Application Framework (BAF) can streamline your business operations. What would you like to know?"
+          : "Hallo! Ich bin Ella, Ihr persönlicher Integrations-Assistent. Ich helfe Ihnen dabei zu entdecken, wie com:cons Best Application Framework (BAF) Ihre Geschäftsprozesse optimieren kann. Was möchten Sie wissen?",
         sender: 'bot',
         timestamp: new Date()
       };
@@ -65,17 +65,30 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           // Process the initial message
           setIsTyping(true);
-          setTimeout(() => {
-            const botResponse = getBotResponse(initialMessage);
-            const botMessage: Message = {
-              id: (Date.now() + 1).toString(),
-              text: botResponse,
-              sender: 'bot',
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, botMessage]);
-            setIsTyping(false);
-          }, 1000);
+          (async () => {
+            try {
+              const botResponse = await runEllaAgent(initialMessage);
+              const botMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: botResponse,
+                sender: 'bot',
+                timestamp: new Date(),
+              };
+              setMessages((prev) => [...prev, botMessage]);
+            } catch (error) {
+              // eslint-disable-next-line no-console
+              console.error('Ella error:', error);
+              const botMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                text: currentLanguage === 'en' ? 'Sorry, something went wrong. Please try again.' : 'Entschuldigung, etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
+                sender: 'bot',
+                timestamp: new Date(),
+              };
+              setMessages((prev) => [...prev, botMessage]);
+            } finally {
+              setIsTyping(false);
+            }
+          })();
         }, 500);
       }
     }
@@ -86,7 +99,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Scroll only the chat container, leaving the rest of the page static.
+    if (containerRef.current) {
+      containerRef.current.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'smooth' });
+    }
   };
 
   const handleSendMessage = async () => {
@@ -103,22 +119,29 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate bot thinking time
-    setTimeout(() => {
-      const botResponse = getBotResponse(inputValue);
+    try {
+      const botResponse = await runEllaAgent(inputValue);
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: botResponse,
         sender: 'bot',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Ella error:', error);
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: currentLanguage === 'en' ? 'Sorry, something went wrong. Please try again.' : 'Entschuldigung, etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, botMessage]);
+    } finally {
       setIsTyping(false);
-
-      // TODO: Auto-detect industry from conversation and call onIndustryDetected
-      // For now, this is handled manually via IndustrySelector
-    }, 1000 + Math.random() * 1000); // Random delay for realism
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -135,7 +158,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <p className="text-sm text-gray-600">{t.subtitle}</p>
       </div>
       
-      <div className="h-96 overflow-y-auto p-4 bg-gray-50">
+      <div ref={containerRef} className="h-96 overflow-y-auto p-4 bg-gray-50">
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message} />
         ))}

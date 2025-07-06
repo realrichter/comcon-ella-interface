@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import HeroSection from '../components/Hero/HeroSection';
 import ChatInterface from '../components/Chat/ChatInterface';
-import IndustrySelector, { Industry } from '../components/IndustrySelector/IndustrySelector';
+import type { Industry } from '../components/IndustrySelector/IndustrySelector';
 import IndustryContent from '../components/IndustryContent/IndustryContent';
 import CallToActionPanel from '../components/CallToAction/CallToActionPanel';
 import VideoModal from '../components/VideoModal/VideoModal';
@@ -43,7 +42,6 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
           onStartConversation={handleStartConversation}
           currentLanguage={currentLanguage}
         />
-        
         {/* Video Modal */}
         <VideoModal
           isOpen={showVideoModal}
@@ -54,8 +52,15 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
     );
   }
 
+  // Gradient backdrop for the header when in chat view
+  // Ensures the transparent navbar text remains readable and adds visual interest.
+  const ChatHeaderBackdrop = () => (
+    <div className="fixed top-0 left-0 right-0 h-20 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 -z-10 pointer-events-none" />
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <ChatHeaderBackdrop />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="space-y-8">
           {/* Back to Hero Button */}
@@ -75,12 +80,7 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
             currentLanguage={currentLanguage}
           />
           
-          {/* Industry Selector */}
-          <IndustrySelector
-            selectedIndustry={selectedIndustry}
-            onIndustryChange={setSelectedIndustry}
-            currentLanguage={currentLanguage}
-          />
+          {/* Industry selector removed – industry will be detected dynamically in chat */}
           
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

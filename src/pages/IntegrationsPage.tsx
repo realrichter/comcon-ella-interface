@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, Loader } from 'lucide-react';
 import { supabase } from '../integrations/supabase/client';

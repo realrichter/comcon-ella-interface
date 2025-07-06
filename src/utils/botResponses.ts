@@ -33,7 +33,7 @@ export const getBotResponse = (userMessage: string): string => {
   }
 
   if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-    return "Hello! I'm Ella, your personal integration assistant. I'm here to help you discover how com:con's Business Automation Framework (BAF) can streamline your business operations. What would you like to know?";
+    return "Hello! I'm Ella, your personal integration assistant. I'm here to help you discover how com:con's Best Application Framework (BAF) can streamline your business operations. What would you like to know?";
   }
 
   // Default helpful response
