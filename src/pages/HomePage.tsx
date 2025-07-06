@@ -55,7 +55,7 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
   // Gradient backdrop for the header when in chat view
   // Ensures the transparent navbar text remains readable and adds visual interest.
   const ChatHeaderBackdrop = () => (
-    <div className="fixed top-0 left-0 right-0 h-20 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 -z-10 pointer-events-none" />
+    <div className="fixed top-0 left-0 right-0 h-16 bg-[#21496c] -z-10 pointer-events-none" />
   );
 
   return (

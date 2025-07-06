@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ currentLanguage, onLanguageToggle, vari
   const headerClass =
     variant === 'transparent'
       ? 'sticky top-0 z-50 bg-transparent backdrop-blur-none'
-      : 'sticky top-0 z-50 bg-neutral-900/90 backdrop-blur-sm';
+      : 'sticky top-0 z-50 bg-[#21496c] backdrop-blur-sm';
   const linkClass =
     'font-medium transition-colors drop-shadow ' +
     (variant === 'transparent'
