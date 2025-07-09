@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Play, BookOpen, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -43,51 +42,54 @@ const CallToActionPanel: React.FC<CallToActionPanelProps> = ({
 
   const t = texts[currentLanguage];
 
+  const cardClasses =
+    "bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 text-center transition-all duration-300 transform hover:scale-105 hover:bg-white/20 hover:shadow-xl group";
+
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-8 text-white">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold mb-2">{t.title}</h2>
-        <p className="text-blue-100">{t.subtitle}</p>
+    <section className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 shadow-xl">
+      {/* Radial accent overlays */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.35),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(147,51,234,0.35),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.25),transparent_70%)]"></div>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Link
-          to="/contact"
-          className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 text-center group"
-        >
-          <Calendar className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold mb-2">{t.consultation}</h3>
-          <p className="text-sm text-blue-100">{t.consultationDesc}</p>
-        </Link>
-        
-        <button
-          onClick={onWatchVideo}
-          className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 text-center group"
-        >
-          <Play className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold mb-2">{t.video}</h3>
-          <p className="text-sm text-blue-100">{t.videoDesc}</p>
-        </button>
-        
-        <button
-          onClick={onLearnMore}
-          className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 text-center group"
-        >
-          <BookOpen className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold mb-2">{t.learnMore}</h3>
-          <p className="text-sm text-blue-100">{t.learnMoreDesc}</p>
-        </button>
-        
-        <button
-          onClick={() => document.querySelector('input')?.focus()}
-          className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/20 transition-all duration-200 transform hover:scale-105 text-center group"
-        >
-          <MessageCircle className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-          <h3 className="font-semibold mb-2">{t.askQuestion}</h3>
-          <p className="text-sm text-blue-100">{t.askQuestionDesc}</p>
-        </button>
+
+      <div className="relative z-10 p-10 text-white">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold mb-4 drop-shadow-md">{t.title}</h2>
+          <p className="text-white/80 max-w-3xl mx-auto leading-relaxed">{t.subtitle}</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link to="/contact" className={cardClasses}>
+            <Calendar className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-semibold mb-2">{t.consultation}</h3>
+            <p className="text-sm text-white/70">{t.consultationDesc}</p>
+          </Link>
+
+          <button onClick={onWatchVideo} className={cardClasses}>
+            <Play className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-semibold mb-2">{t.video}</h3>
+            <p className="text-sm text-white/70">{t.videoDesc}</p>
+          </button>
+
+          <button onClick={onLearnMore} className={cardClasses}>
+            <BookOpen className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-semibold mb-2">{t.learnMore}</h3>
+            <p className="text-sm text-white/70">{t.learnMoreDesc}</p>
+          </button>
+
+          <button
+            onClick={() => document.querySelector('input')?.focus()}
+            className={cardClasses}
+          >
+            <MessageCircle className="w-8 h-8 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+            <h3 className="font-semibold mb-2">{t.askQuestion}</h3>
+            <p className="text-sm text-white/70">{t.askQuestionDesc}</p>
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
