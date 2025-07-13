@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import HeroSection from '../components/Hero/HeroSection';
 import ChatInterface from '../components/Chat/ChatInterface';
 import type { Industry } from '../components/IndustrySelector/IndustrySelector';
@@ -17,6 +18,34 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
   const [showBAFInfo, setShowBAFInfo] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [initialMessage, setInitialMessage] = useState('');
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Detect query param to auto open chat (used by floating button)
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('openChat') === 'true') {
+      setShowChat(true);
+    }
+  }, [location.search]);
+
+  // Keep URL in sync with chat visibility so other components (like floating button)
+  // can determine whether chat is currently open.
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (showChat) {
+      if (params.get('openChat') !== 'true') {
+        params.set('openChat', 'true');
+        navigate({ search: params.toString() }, { replace: true });
+      }
+    } else {
+      if (params.has('openChat')) {
+        params.delete('openChat');
+        navigate({ search: params.toString() }, { replace: true });
+      }
+    }
+  }, [showChat, location.search, navigate]);
 
   const handleWatchVideo = () => {
     setShowVideoModal(true);

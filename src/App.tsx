@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage";
 import IntegrationsPage from "./pages/IntegrationsPage";
 import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
+import ChatFloatButton from "./components/Chat/ChatFloatButton";
 import React from "react";
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <AppLayout />
+          <ChatFloatButton />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

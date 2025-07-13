@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send } from 'lucide-react';
 import ChatMessage, { Message } from './ChatMessage';
 import { runEllaAgent } from '../../lib/ellaAgent';
@@ -14,7 +14,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   onIndustryDetected, 
   initialMessage 
 }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  // Lazily load any persisted chat history on first render
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const stored = localStorage.getItem('chat_messages');
+    if (stored) {
+      try {
+        const parsed: Array<Omit<Message, 'timestamp'> & { timestamp: string }> = JSON.parse(stored);
+        return parsed.map((m) => ({ ...m, timestamp: new Date(m.timestamp) })) as Message[];
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('Failed to parse stored chat messages', e);
+      }
+    }
+    return [];
+  });
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -39,6 +52,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const t = texts[currentLanguage];
 
+  // Helper to persist messages to localStorage
+  const persistMessages = useCallback((msgs: Message[]) => {
+    localStorage.setItem(
+      'chat_messages',
+      JSON.stringify(msgs.map((m) => ({ ...m, timestamp: m.timestamp.toISOString() }))),
+    );
+  }, []);
+
+  // Persist messages whenever they change inside this component
+  useEffect(() => {
+    if (messages.length) {
+      persistMessages(messages);
+    }
+  }, [messages, persistMessages]);
+
   useEffect(() => {
     if (messages.length === 0) {
       // Initial greeting
@@ -51,6 +79,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         timestamp: new Date()
       };
       setMessages([welcomeMessage]);
+      persistMessages([welcomeMessage]);
 
       // If there's an initial message from the hero, process it
       if (initialMessage) {
@@ -61,7 +90,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
             sender: 'user',
             timestamp: new Date()
           };
-          setMessages(prev => [...prev, userMessage]);
+          setMessages(prev => {
+            const next = [...prev, userMessage];
+            persistMessages(next);
+            return next;
+          });
           
           // Process the initial message
           setIsTyping(true);
@@ -74,7 +107,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 sender: 'bot',
                 timestamp: new Date(),
               };
-              setMessages((prev) => [...prev, botMessage]);
+              // Persist regardless of component mount state
+              persistMessages([...messages, userMessage, botMessage]);
+              setMessages((prev) => {
+                const next = [...prev, botMessage];
+                return next;
+              });
             } catch (error) {
               // eslint-disable-next-line no-console
               console.error('Ella error:', error);
@@ -84,6 +122,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 sender: 'bot',
                 timestamp: new Date(),
               };
+              persistMessages([...messages, userMessage, botMessage]);
               setMessages((prev) => [...prev, botMessage]);
             } finally {
               setIsTyping(false);
@@ -92,7 +131,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         }, 500);
       }
     }
-  }, [currentLanguage, initialMessage]);
+  }, [currentLanguage, initialMessage, messages, persistMessages]);
 
   useEffect(() => {
     scrollToBottom();
@@ -115,7 +154,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => {
+      const next = [...prev, userMessage];
+      persistMessages(next);
+      return next;
+    });
     setInputValue('');
     setIsTyping(true);
 
@@ -128,7 +171,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         timestamp: new Date(),
       };
 
-      setMessages((prev) => [...prev, botMessage]);
+      persistMessages([...messages, userMessage, botMessage]);
+      setMessages((prev) => {
+        const next = [...prev, botMessage];
+        return next;
+      });
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Ella error:', error);
@@ -138,6 +185,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         sender: 'bot',
         timestamp: new Date(),
       };
+      persistMessages([...messages, userMessage, botMessage]);
       setMessages((prev) => [...prev, botMessage]);
     } finally {
       setIsTyping(false);
