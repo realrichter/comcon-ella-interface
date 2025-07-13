@@ -38,8 +38,8 @@ const searchIntegrationsTool = tool({
       return supabase
         .from('connectors')
         .select('name, description, category')
-        // The `or` filter lets us test multiple columns in a single request
-        .or(`name.ilike.*${pattern}*,description.ilike.*${pattern}*`);
+        // Search across name, description, AND category for partial matches (case-insensitive)
+        .or(`name.ilike.*${pattern}*,description.ilike.*${pattern}*,category.ilike.*${pattern}*`);
     }
 
     try {
