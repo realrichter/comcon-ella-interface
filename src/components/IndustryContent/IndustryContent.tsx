@@ -14,12 +14,12 @@ const IndustryContent: React.FC<IndustryContentProps> = ({ selectedIndustry, cur
       en: {
         welcome: 'Welcome to com:con Solutions',
         subtitle: 'Your Partner for Business Automation',
-        description: 'Our Best Application Framework (BAF) connects your existing systems to create seamless, efficient workflows. Select your industry above to see how we can help transform your business operations.'
+        description: 'Our Best Application Framework (BAF) connects your existing systems to create seamless, efficient workflows. Chat with Ella to see how we can help transform your business operations.'
       },
       de: {
         welcome: 'Willkommen bei com:con Solutions',
         subtitle: 'Ihr Partner für Geschäftsautomatisierung',
-        description: 'Unser Best Application Framework (BAF) verbindet Ihre bestehenden Systeme, um nahtlose, effiziente Arbeitsabläufe zu schaffen. Wählen Sie oben Ihre Branche aus, um zu sehen, wie wir Ihre Geschäftsprozesse transformieren können.'
+        description: 'Unser Best Application Framework (BAF) verbindet Ihre bestehenden Systeme, um nahtlose, effiziente Arbeitsabläufe zu schaffen. Starten Sie eine Konversation mit Ella, um zu sehen, wie wir Ihre Geschäftsprozesse transformieren können.'
       }
     };
 
