@@ -64,6 +64,15 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
     setShowChat(true);
   };
 
+  // Clear any stored initialMessage once the user exits the chat view. This prevents
+  // the previous prompt from being re-sent when reopening the chat via the floating
+  // button or other means.
+  useEffect(() => {
+    if (!showChat) {
+      setInitialMessage('');
+    }
+  }, [showChat]);
+
   if (!showChat) {
     return (
       <div className="min-h-screen">
@@ -95,7 +104,10 @@ const HomePage: React.FC<HomePageProps> = ({ currentLanguage }) => {
           {/* Back to Hero Button */}
           <div className="flex justify-between items-center">
             <button
-              onClick={() => setShowChat(false)}
+              onClick={() => {
+                setShowChat(false);
+                setInitialMessage(''); // explicit reset for immediate consistency
+              }}
               className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
               ← {currentLanguage === 'en' ? 'Back to Home' : 'Zurück zur Startseite'}

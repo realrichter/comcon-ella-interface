@@ -133,6 +133,69 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   }, [currentLanguage, initialMessage, messages, persistMessages]);
 
+  // If the chat already has messages, treat any new initialMessage prop as a fresh
+  // question from the user and append it to the conversation.
+  useEffect(() => {
+    // Only run when there is chat history and a non-empty initialMessage was provided.
+    if (!initialMessage || messages.length === 0) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: initialMessage,
+      sender: 'user',
+      timestamp: new Date(),
+    };
+
+    setMessages((prev) => {
+      const next = [...prev, userMessage];
+      persistMessages(next);
+      return next;
+    });
+
+    setIsTyping(true);
+
+    (async () => {
+      try {
+        const botResponse = await runEllaAgent(initialMessage);
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: botResponse,
+          sender: 'bot',
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => {
+          const next = [...prev, botMessage];
+          persistMessages(next);
+          return next;
+        });
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Ella error:', error);
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text:
+            currentLanguage === 'en'
+              ? 'Sorry, something went wrong. Please try again.'
+              : 'Entschuldigung, etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
+          sender: 'bot',
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => {
+          const next = [...prev, botMessage];
+          persistMessages(next);
+          return next;
+        });
+      } finally {
+        setIsTyping(false);
+      }
+    })();
+    // We intentionally omit messages from deps to avoid infinite loops caused by the
+    // state updates inside this effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialMessage, persistMessages]);
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
