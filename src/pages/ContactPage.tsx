@@ -35,7 +35,7 @@ const ContactPage: React.FC<ContactPageProps> = ({ currentLanguage }) => {
       invalidEmail: 'Please enter a valid email address',
       contactInfo: 'Contact Information',
       phone: '+49 (0) 123 456 7890',
-      email_contact: 'hello@comcon-solutions.com',
+      email_contact: 'hello@com-con.net',
       address: 'Munich, Germany'
     },
     de: {
